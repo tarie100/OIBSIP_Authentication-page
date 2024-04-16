@@ -1,63 +1,63 @@
-import bcrypt
 from flask import Flask, render_template, request, redirect, session
+from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
-app.secret_key = "your_secret_key"
+bcrypt = Bcrypt(app)
 
-# Dictionary to store user information (username and hashed password)
+# User database
 users = {}
 
-@app.route("/")
+@app.route('/')
 def home():
-    if "username" in session:
-        return redirect("/secured")
-    else:
-        return render_template("index.html")
+    return render_template('index.html')
 
-@app.route("/register", methods=["GET", "POST"])
+@app.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == "POST":
-        username = request.form["username"]
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
         if username in users:
-            return "Username already exists. Please try again."
+            return "Username already exists. Please choose a different username."
 
-        password = request.form["password"]
-        hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
-
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
         users[username] = hashed_password
-        return "Registration successful. <a href='/'>Login</a>"
-    else:
-        return render_template("register.html")
 
-@app.route("/login", methods=["GET", "POST"])
+        return redirect('/login')
+
+    return render_template('register.html')
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
 
         if username not in users:
-            return "Invalid username."
+            return "Username does not exist. Please register."
 
         hashed_password = users[username]
-        if bcrypt.checkpw(password.encode(), hashed_password):
-            session["username"] = username
-            return redirect("/secured")
+
+        if bcrypt.check_password_hash(hashed_password, password):
+            session['username'] = username
+            return redirect('/dashboard')
         else:
-            return "Incorrect password."
-    else:
-        return render_template("login.html")
+            return "Incorrect password. Please try again."
 
-@app.route("/secured")
-def secured_page():
-    if "username" in session:
-        return "Welcome to the secured page!"
-    else:
-        return redirect("/")
+    return render_template('login.html')
 
-@app.route("/logout")
+@app.route('/dashboard')
+def dashboard():
+    if 'username' in session:
+        return render_template('dashboard.html', username=session['username'])
+    else:
+        return "You must be logged in to access this page."
+
+@app.route('/logout')
 def logout():
-    session.pop("username", None)
-    return redirect("/")
+    session.pop('username', None)
+    return redirect('/')
 
-if __name__ == "__main__":
-    app.run()
+if __name__ == '__main__':
+    app.secret_key = 'secret_key'
+    app.run(debug=True)

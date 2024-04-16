@@ -2,19 +2,31 @@
 <html>
 <head>
     <title>Register</title>
-    
+    <style>
+        body{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        form{
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
 </head>
 <body>
     <h1>Register</h1>
-
     <form action="/register" method="POST">
         <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br>
-
+        <input type="text" id="username" name="username" required><br><br>
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br>
-
+        <input type="password" id="password" name="password" required><br><br>
+        <label for="password">Confirm Password:</label>
+        <input type="password" id="confirmPassword" name="password" required><br><br>
         <input type="submit" value="Register">
     </form>
+    <script src="static/index.js"></script>
 </body>
 </html>
