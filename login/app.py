@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, session
-from bcrypt import Bcrypt
+from bcrypt import _bcrypt as Bcrypt
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
