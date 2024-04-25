@@ -10,4 +10,5 @@ psycopg2-binary==2.9.5
 SQLAlchemy==1.4.46
 Werkzeug==2.2.2
 bcrypt==4.1.2
-Flask-Bcrypt=1.0.1
+Flask-Bcrypt==1.0.1
+flask_bcrypt==1.0.1
